@@ -19,7 +19,31 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
 
-# In[284]:
+# In[325]:
+
+
+import streamlit as st
+import pandas as pd
+import zipfile
+import os
+
+st.title("Estimation du prix des maisons")
+
+# Extraire le fichier si besoin
+if not os.path.exists("house_prices.csv") and os.path.exists("house_prices.zip"):
+    with zipfile.ZipFile("house_prices.zip", 'r') as zip_ref:
+        zip_ref.extractall(".")
+
+# Charger les données
+if os.path.exists("house_prices.csv"):
+    df = pd.read_csv("house_prices.csv")
+    st.success("Fichier chargé avec succès !")
+    st.write(df.head())
+else:
+    st.error("Fichier CSV introuvable.")
+
+
+# In[326]:
 
 
 # 2. Charger les données"
@@ -28,7 +52,7 @@ df = pd.read_csv("C:\\Users\\A\\Desktop\\IA MASTER2\\House Price prediction\\hou
 df.head()
 
 
-# In[285]:
+# In[327]:
 
 
 # Étape 3 : Prétraitement simple
@@ -41,7 +65,7 @@ df.describe()
 df.isnull().sum()
 
 
-# In[286]:
+# In[328]:
 
 
 df.info()
@@ -54,13 +78,13 @@ df.info()
 #df.head()
 
 
-# In[288]:
+# In[329]:
 
 
 print(df.columns.tolist())
 
 
-# In[289]:
+# In[330]:
 
 
 # Sélectionner les colonnes de type object avec peu de modalités (ex: < 100)
@@ -80,7 +104,7 @@ df = pd.get_dummies(df, columns=cat_cols, drop_first=True)
 #y = df["Price (in rupees)"]
 
 
-# In[290]:
+# In[331]:
 
 
 print("df shape:", df.shape)
@@ -89,7 +113,7 @@ print("y shape:", y.shape)
 print(df.head())
 
 
-# In[291]:
+# In[332]:
 
 
 df.fillna(0, inplace=True)  # Replace NaNs with 0
@@ -102,20 +126,20 @@ print("X shape:", X.shape)
 print("y shape:", y.shape)
 
 
-# In[292]:
+# In[333]:
 
 
 print(df.shape)
 print(X.shape)
 
 
-# In[293]:
+# In[334]:
 
 
 df = df.dropna()  # ou df.dropna()
 
 
-# In[294]:
+# In[335]:
 
 
 if df.empty:
@@ -124,7 +148,7 @@ else:
     print("Le DataFrame contient :", df.shape[0], "lignes")
 
 
-# In[295]:
+# In[336]:
 
 
 # Garder uniquement les colonnes numériques mais pas les lignes vides
@@ -132,13 +156,13 @@ df = df.select_dtypes(include=["int64", "float64"])
 df = df.dropna()
 
 
-# In[296]:
+# In[338]:
 
 
 print(len(X), len(y))  # Les deux doivent avoir plus que 0 lignes et même taille
 
 
-# In[297]:
+# In[339]:
 
 
 import pandas as pd
@@ -164,7 +188,7 @@ for col in numerical_cols:
 
 
 
-# In[313]:
+# In[340]:
 
 
 # Filtrer les colonnes numériques
@@ -179,7 +203,7 @@ plt.tight_layout()
 plt.show()
 
 
-# In[316]:
+# In[341]:
 
 
 # Boîtes à moustaches pour chaque colonne numérique
@@ -192,7 +216,7 @@ for col in numerical_df.columns:
     plt.show()
 
 
-# In[298]:
+# In[342]:
 
 
 # Define X and y
@@ -203,7 +227,7 @@ y = df['Price (in rupees)']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
-# In[299]:
+# In[343]:
 
 
 # Étape 5 : Entraînement du modèle
@@ -214,7 +238,7 @@ model = RandomForestRegressor()
 model.fit(X_train, y_train)
 
 
-# In[300]:
+# In[344]:
 
 
 # Étape 7 : Application Streamlit
@@ -222,7 +246,7 @@ model.fit(X_train, y_train)
 joblib.dump(model, "house_price_model.pkl")
 
 
-# In[303]:
+# In[345]:
 
 
 import joblib
@@ -231,19 +255,19 @@ obj = joblib.load("house_price_model.pkl")
 print(type(obj))
 
 
-# In[305]:
+# In[346]:
 
 
 print(obj)
 
 
-# In[306]:
+# In[347]:
 
 
 joblib.dump({'model': model, 'features': features}, "house_price_model.pkl")
 
 
-# In[308]:
+# In[349]:
 
 
 data = joblib.load("house_price_model.pkl")
@@ -251,14 +275,14 @@ model = data['model']
 features = data['features']
 
 
-# In[309]:
+# In[351]:
 
 
 obj = joblib.load("house_price_model.pkl")
 print(obj)
 
 
-# In[317]:
+# In[352]:
 
 
 # Charger modèle et features (même si features semble incorrect dans le fichier)
@@ -267,7 +291,7 @@ model = obj['model']
 
 
 
-# In[318]:
+# In[353]:
 
 
 # Afficher les noms exacts de colonnes attendues par le modèle
@@ -275,7 +299,7 @@ print("Colonnes exactes utilisées à l'entraînement :", model.feature_names_in
 
 
 
-# In[320]:
+# In[354]:
 
 
 # Créer les données d'entrée dans le bon ordre avec les bons noms
@@ -283,7 +307,7 @@ X_input = pd.DataFrame([[850, 1000]], columns=model.feature_names_in_)
 
 
 
-# In[321]:
+# In[355]:
 
 
 # Prédire
